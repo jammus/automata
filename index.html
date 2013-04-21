@@ -1,21 +1,21 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Game of Life</title>
+        <title>Automata</title>
         <script src="js/gol.js"></script>
         <script>
             window.addEventListener('load', function() {
                 var canvas = document.getElementById('board'),
                     context = canvas.getContext("2d");
 
-                var cells = gameOfLife.patterns.glider;
-                gameOfLife.draw(context, cells);
+                var cells = automata.patterns.glider;
+                automata.draw(context, cells);
 
                 setTimeout(tick, 200);
 
                 function tick() {
-                    cells = gameOfLife.calculateNextGeneration(cells);
-                    gameOfLife.draw(context, cells);
+                    cells = automata.nextGeneration(cells, automata.gameOfLife);
+                    automata.draw(context, cells);
                     setTimeout(tick, 200);
                 }
             });

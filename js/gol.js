@@ -1,13 +1,40 @@
-window.gameOfLife = {
-    calculateNextGeneration: function(cells) {
+window.automata = {
+    gameOfLife: function(cell, neighbours) {
+        if (cell == 0 && neighbours == 3) {
+            return 1;
+        }
+
+        if (cell == 1 && neighbours < 2) {
+            return 0;
+        }
+
+        if (cell == 1 && neighbours > 3) {
+            return 0;
+        }
+
+        return cell;
+    },
+
+    seeds: function(cell, neighbours) {
+        if (cell == 0 && neighbours == 2) {
+            return 1;
+        }
+
+        return 0;
+    },
+
+    nextGeneration: function(cells, fn) {
         var height = cells.length,
             width = cells[0].length;
 
-        var nextGeneration = initialiseCells(width, height);
+        var nextGeneration = initialiseCells(width, height),
+            cell, neighbours;
 
         for (var row = 0; row < height; row++) {
             for (var column = 0; column < width; column++) {
-                nextGeneration[row][column] = transformCell(row, column);
+                cell = cells[row][column];
+                neighbours = countNeighbours(row, column);
+                nextGeneration[row][column] = fn(cell, neighbours);
             }
         }
 
@@ -21,25 +48,6 @@ window.gameOfLife = {
             }
 
             return cells;
-        }
-
-        function transformCell(row, column) {
-            var cell = cells[row][column],
-                neighbours = countNeighbours(row, column);
-
-            if (cell == 0 && neighbours == 3) {
-                return 1;
-            }
-
-            if (cell == 1 && neighbours < 2) {
-                return 0;
-            }
-
-            if (cell == 1 && neighbours > 3) {
-                return 0;
-            }
-
-            return cell;
         }
 
         function countNeighbours(cellRow, cellColumn) {
