@@ -40,11 +40,13 @@
 
     GameOfLife.prototype.draw = function() {
         var row, column;
+
         for (row = 0; row < this._height; row++) {
             for (column = 0; column < this._width; column++) {
                 var x = column * this._blockSize,
-                    y = row * this._blockSize;
-                var cell = this._state[row][column];
+                    y = row * this._blockSize,
+                    cell = this._state[row][column];
+
                 this._context.fillStyle = cell == 1 ? '#ff0000' : '#ffffff';
                 this._context.fillRect(x, y, this._blockSize, this._blockSize);
             }
@@ -53,6 +55,7 @@
     
     GameOfLife.prototype._countNeighbours = function(cellRow, cellColumn) {
         var row, column, neighbours = 0;
+
         for (row = cellRow - 1; row <= cellRow + 1; row++) {
             for (column = cellColumn - 1; column <= cellColumn + 1; column++) {
                 if (row == cellRow && column == cellColumn) {
@@ -63,6 +66,7 @@
                 }
             }
         }
+
         return neighbours;
     };
     
@@ -70,9 +74,11 @@
         if (row < 0 || row >= this._height) {
             return false;
         }
+
         if (column < 0 || column >= this._width) {
             return false;
         }
+
         return this._state[row][column] == 1;
     };
     
