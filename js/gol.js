@@ -1,31 +1,30 @@
-(function() {
+window.gameOfLife = {
+    calculateNextGeneration: function(cells) {
+        var height = cells.length,
+            width = cells[0].length;
 
-    var gameOfLife = function(world) {
-        var height = world.length,
-            width = world[0].length;
-
-        var newWorld = initialiseWorld(width, height);
+        var nextGeneration = initialiseCells(width, height);
 
         for (var row = 0; row < height; row++) {
             for (var column = 0; column < width; column++) {
-                newWorld[row][column] = transformCell(row, column);
+                nextGeneration[row][column] = transformCell(row, column);
             }
         }
 
-        return newWorld;
+        return nextGeneration;
 
-        function initialiseWorld(width, height) {
-            var world = [ ];
+        function initialiseCells(width, height) {
+            var cells = [ ];
 
             for (var i = 0; i < height; i++) {
-                world[i] = [ ];
+                cells[i] = [ ];
             }
 
-            return world;
+            return cells;
         }
 
         function transformCell(row, column) {
-            var cell = world[row][column],
+            var cell = cells[row][column],
                 neighbours = countNeighbours(row, column);
 
             if (cell == 0 && neighbours == 3) {
@@ -69,14 +68,14 @@
                 return false;
             }
 
-            return world[row][column] == 1;
+            return cells[row][column] == 1;
         }
 
-    };
+    },
 
-    var drawWorld = function(context, world) {
-        var height = world.length,
-            width = world[0].length;
+    draw: function(context, cells) {
+        var height = cells.length,
+            width = cells[0].length;
 
         var blockSize = context.canvas.width / height;
 
@@ -86,19 +85,16 @@
             for (column = 0; column < width; column++) {
                 var x = column * blockSize,
                     y = row * blockSize,
-                    cell = world[row][column];
+                    cell = cells[row][column];
 
                 context.fillStyle = cell == 1 ? '#ff0000' : '#ffffff';
                 context.fillRect(x, y, blockSize, blockSize);
             }
         }
-    };
+    },
 
-    window.addEventListener('load', function() {
-        var canvas = document.getElementById('board'),
-            context = canvas.getContext("2d");
-        
-        var world = [
+    patterns: {
+        glider: [
             [ 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 ],
             [ 0, 0, 0, 1, 0, 0, 0, 0, 0, 0 ],
             [ 0, 1, 1, 1, 0, 0, 0, 0, 0, 0 ],
@@ -108,15 +104,23 @@
             [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
             [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
             [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-            [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-        ];
-        
-        drawWorld(context, world);
+            [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ]
+        ]
+    }
+};
+
+window.addEventListener('load', function() {
+    var canvas = document.getElementById('board'),
+        context = canvas.getContext("2d");
+
+    var cells = gameOfLife.patterns.glider;
+    gameOfLife.draw(context, cells);
+
+    setTimeout(tick, 200);
+
+    function tick() {
+        cells = gameOfLife.calculateNextGeneration(cells);
+        gameOfLife.draw(context, cells);
         setTimeout(tick, 200);
-        function tick() {
-            world = gameOfLife(world);
-            drawWorld(context, world);
-            setTimeout(tick, 200);
-        }
-    });
-})();
+    }
+});
