@@ -79,13 +79,13 @@ window.gameOfLife = {
 
         var blockSize = context.canvas.width / height;
 
-        var row, column;
+        var x, y, cell;
 
-        for (row = 0; row < height; row++) {
-            for (column = 0; column < width; column++) {
-                var x = column * blockSize,
-                    y = row * blockSize,
-                    cell = cells[row][column];
+        for (var row = 0; row < height; row++) {
+            for (var column = 0; column < width; column++) {
+                x = column * blockSize;
+                y = row * blockSize;
+                cell = cells[row][column];
 
                 context.fillStyle = cell == 1 ? '#ff0000' : '#ffffff';
                 context.fillRect(x, y, blockSize, blockSize);
@@ -108,19 +108,3 @@ window.gameOfLife = {
         ]
     }
 };
-
-window.addEventListener('load', function() {
-    var canvas = document.getElementById('board'),
-        context = canvas.getContext("2d");
-
-    var cells = gameOfLife.patterns.glider;
-    gameOfLife.draw(context, cells);
-
-    setTimeout(tick, 200);
-
-    function tick() {
-        cells = gameOfLife.calculateNextGeneration(cells);
-        gameOfLife.draw(context, cells);
-        setTimeout(tick, 200);
-    }
-});
