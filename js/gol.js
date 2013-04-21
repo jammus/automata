@@ -1,5 +1,5 @@
 (function() {
-    var Board = function(context, initialState) {
+    var GameOfLife = function(context, initialState) {
         this._context = context;
         this._state = initialState;
         
@@ -9,9 +9,9 @@
         this._blockSize = 20;
     };
 
-    Board.prototype.update = function() {
+    GameOfLife.prototype.update = function() {
         var newState = [ ],
-            row, column, tile, newTile, neighbours;
+            row, column, cell, newCell, neighbours;
 
         for (row = 0; row < this._height; row++) {
             newState[row] = [ ]
@@ -20,45 +20,45 @@
         for (row = 0; row < this._height; row++) {
             for (column = 0; column < this._width; column++) {
                 var neighbours = this._countNeighbours(row, column);
-                tile = this._state[row][column];
-                newTile = tile;
-                if (tile == 0 && neighbours == 3) {
-                    newTile = 1;
+                cell = this._state[row][column];
+                newCell = cell;
+                if (cell == 0 && neighbours == 3) {
+                    newCell = 1;
                 }
-                if (tile == 1 && neighbours < 2) {
-                    newTile = 0;
+                if (cell == 1 && neighbours < 2) {
+                    newCell = 0;
                 }
-                if (tile == 1 && neighbours > 3) {
-                    newTile = 0;
+                if (cell == 1 && neighbours > 3) {
+                    newCell = 0;
                 }
-                newState[row][column] = newTile;
+                newState[row][column] = newCell;
             }
         }
 
         this._state = newState;
     };
 
-    Board.prototype.draw = function() {
+    GameOfLife.prototype.draw = function() {
         var row, column;
         for (row = 0; row < this._height; row++) {
             for (column = 0; column < this._width; column++) {
                 var x = column * this._blockSize,
                     y = row * this._blockSize;
-                var tile = this._state[row][column];
-                this._context.fillStyle = tile == 1 ? '#ff0000' : '#ffffff';
+                var cell = this._state[row][column];
+                this._context.fillStyle = cell == 1 ? '#ff0000' : '#ffffff';
                 this._context.fillRect(x, y, this._blockSize, this._blockSize);
             }
         }
     };
     
-    Board.prototype._countNeighbours = function(tileRow, tileColumn) {
+    GameOfLife.prototype._countNeighbours = function(cellRow, cellColumn) {
         var row, column, neighbours = 0;
-        for (row = tileRow - 1; row <= tileRow + 1; row++) {
-            for (column = tileColumn - 1; column <= tileColumn + 1; column++) {
-                if (row == tileRow && column == tileColumn) {
+        for (row = cellRow - 1; row <= cellRow + 1; row++) {
+            for (column = cellColumn - 1; column <= cellColumn + 1; column++) {
+                if (row == cellRow && column == cellColumn) {
                     continue;
                 }
-                if (this._isLive(row, column)) {
+                if (this._isCellLive(row, column)) {
                     neighbours++;
                 }
             }
@@ -66,7 +66,7 @@
         return neighbours;
     };
     
-    Board.prototype._isLive = function(row, column) {
+    GameOfLife.prototype._isCellLive = function(row, column) {
         if (row < 0 || row >= this._height) {
             return false;
         }
@@ -80,7 +80,7 @@
         var c = document.getElementById('board'),
             context = c.getContext("2d");
         
-        var board = new Board(
+        var game = new GameOfLife(
             context,
             [
                 [ 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 ],
@@ -96,12 +96,11 @@
             ]
         );
         
-        
-        board.draw();
+        game.draw();
         setTimeout(tick, 200);
         function tick() {
-            board.update();
-            board.draw();
+            game.update();
+            game.draw();
             setTimeout(tick, 200);
         }
     });
