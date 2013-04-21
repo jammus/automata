@@ -23,7 +23,7 @@ window.automata = {
         return 0;
     },
 
-    nextGeneration: function(cells, fn) {
+    nextGeneration: function(cells, rule) {
         var height = cells.length,
             width = cells[0].length;
 
@@ -34,7 +34,7 @@ window.automata = {
             for (var column = 0; column < width; column++) {
                 cell = cells[row][column];
                 neighbours = countNeighbours(row, column);
-                nextGeneration[row][column] = fn(cell, neighbours);
+                nextGeneration[row][column] = rule(cell, neighbours);
             }
         }
 
