@@ -6,7 +6,7 @@
         this._height = this._state.length;
         this._width = this._state[0].length;
         
-        this._blockSize = 20;
+        this._blockSize = context.canvas.width / this._height;
     };
 
     GameOfLife.prototype.update = function() {
@@ -77,8 +77,8 @@
     };
     
     window.addEventListener('load', function() {
-        var c = document.getElementById('board'),
-            context = c.getContext("2d");
+        var canvas = document.getElementById('board'),
+            context = canvas.getContext("2d");
         
         var game = new GameOfLife(
             context,
