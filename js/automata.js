@@ -77,7 +77,7 @@
             },
 
             seeds: function(cell, neighbours) {
-                if (cell == 0 && neighbours == 2) {
+                if (cell == STATES.OFF && neighbours == 2) {
                     return STATES.ON;
                 }
 
@@ -85,7 +85,7 @@
             },
 
             briansBrain: function(cell, neighbours) {
-                if (cell == 0 && neighbours == 2) {
+                if (cell == STATES.OFF && neighbours == 2) {
                     return STATES.ON;
                 }
 
