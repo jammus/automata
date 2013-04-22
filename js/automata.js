@@ -1,161 +1,187 @@
-window.automata = {
+(function() {
 
-    states: {
+    var STATES = {
         OFF: 0,
-
         ON: 1,
+        DYING: 2
+    };
 
-        DYING: 2,
-    },
+    var COLORS = {
+        0: '#ffffff',
+        1: '#ff0000',
+        2: '#0000ff'
+    };
 
-    nextGeneration: function(cells, rule, neighbourhood) {
-        var height = cells.length,
-            width = cells[0].length;
+    var automata = window.automata = {
 
-        var nextGeneration = initialiseCells(width, height),
-            cell, neighbours;
+        nextGeneration: function(cells, rule, neighbourhood) {
+            var height = cells.length,
+                width = cells[0].length;
 
-        for (var row = 0; row < height; row++) {
-            for (var column = 0; column < width; column++) {
-                cell = cells[row][column];
-                neighbours = neighbourhood(cells, row, column);
-                nextGeneration[row][column] = rule(cell, neighbours.length);
-            }
-        }
+            var nextGeneration = initialiseCells(width, height),
+                cell, neighbours;
 
-        return nextGeneration;
-
-        function initialiseCells(width, height) {
-            var cells = [ ];
-
-            for (var i = 0; i < height; i++) {
-                cells[i] = [ ];
+            for (var row = 0; row < height; row++) {
+                for (var column = 0; column < width; column++) {
+                    cell = cells[row][column];
+                    neighbours = neighbourhood(cells, row, column);
+                    nextGeneration[row][column] = rule(cell, neighbours.length);
+                }
             }
 
-            return cells;
-        }
-    },
+            return nextGeneration;
 
-    draw: function(context, cells) {
-        var COLORS = {
-            0: '#ffffff',
-            1: '#ff0000',
-            2: '#0000ff'
-        };
+            function initialiseCells(width, height) {
+                var cells = [ ];
 
-        var height = cells.length,
-            width = cells[0].length,
-            blockSize = context.canvas.width / height,
-            x, y, cell;
+                for (var i = 0; i < height; i++) {
+                    cells[i] = [ ];
+                }
 
-        for (var row = 0; row < height; row++) {
-            for (var column = 0; column < width; column++) {
-                x = column * blockSize;
-                y = row * blockSize;
-                cell = cells[row][column];
-
-                context.fillStyle = COLORS[cell];
-                context.fillRect(x, y, blockSize, blockSize);
+                return cells;
             }
-        }
-    },
-    
-    rules: {
-        gameOfLife: function(cell, neighbours) {
-            if (cell == automata.states.OFF && neighbours == 3) {
-                return automata.states.ON;
-            }
-
-            if (cell == automata.states.ON && neighbours < 2) {
-                return automata.states.OFF;
-            }
-
-            if (cell == automata.states.ON && neighbours > 3) {
-                return automata.states.OFF;
-            }
-
-            return cell;
         },
 
-        seeds: function(cell, neighbours) {
-            if (cell == 0 && neighbours == 2) {
-                return automata.states.ON;
-            }
+        draw: function(context, cells) {
+            var height = cells.length,
+                width = cells[0].length,
+                blockSize = context.canvas.width / height,
+                x, y, cell;
 
-            return automata.states.OFF;
+            for (var row = 0; row < height; row++) {
+                for (var column = 0; column < width; column++) {
+                    x = column * blockSize;
+                    y = row * blockSize;
+                    cell = cells[row][column];
+
+                    context.fillStyle = COLORS[cell];
+                    context.fillRect(x, y, blockSize, blockSize);
+                }
+            }
         },
 
-        briansBrain: function(cell, neighbours) {
-            if (cell == 0 && neighbours == 2) {
-                return automata.states.ON;
-            }
+        rules: {
+            gameOfLife: function(cell, neighbours) {
+                if (cell == STATES.OFF && neighbours == 3) {
+                    return STATES.ON;
+                }
 
-            if (cell == automata.states.ON) {
-                return 2;
-            }
+                if (cell == STATES.ON && neighbours < 2) {
+                    return STATES.OFF;
+                }
 
-            return automata.states.OFF;
-        },
-    },
+                if (cell == STATES.ON && neighbours > 3) {
+                    return STATES.OFF;
+                }
 
-    neighbourhoods: {
+                return cell;
+            },
 
-        /**
-         *
-         * . . . . .
-         * . x x x .
-         * . x o x .
-         * . x x x .
-         * . . . . .
-         *
-         * The Moore neighbourhood comprises the eight cells surrounding
-         * a central cell
-         *
-         */
-        moore: function(cells, row, column) {
-            var candidates = [
-                [ row - 1, column - 1 ],
-                [ row - 1, column ],
-                [ row - 1, column + 1],
+            seeds: function(cell, neighbours) {
+                if (cell == 0 && neighbours == 2) {
+                    return STATES.ON;
+                }
 
-                [ row, column - 1 ],
-                [ row, column + 1],
+                return STATES.OFF;
+            },
 
-                [ row + 1, column - 1 ],
-                [ row + 1, column ],
-                [ row + 1, column + 1]
-            ];
+            briansBrain: function(cell, neighbours) {
+                if (cell == 0 && neighbours == 2) {
+                    return STATES.ON;
+                }
 
-            return new automata.Neighbourhood(cells, candidates);
+                if (cell == STATES.ON) {
+                    return 2;
+                }
+
+                return STATES.OFF;
+            },
         },
 
-        /**
-         *
-         * . . . . .
-         * . . x . .
-         * . x o x .
-         * . . x . .
-         * . . . . .
-         *
-         * The von Neumann neighbourhood comprises the four cells orthogonally
-         * surrounding a central cell.
-         *
-         */
-        vonNeumann: function(cells, row, column) {
-            var candidates = [
-                [ row - 1, column ],
+        neighbourhoods: {
 
-                [ row, column - 1 ],
-                [ row, column + 1 ],
+            /**
+             *
+             * . . . . .
+             * . x x x .
+             * . x o x .
+             * . x x x .
+             * . . . . .
+             *
+             * The Moore neighbourhood comprises the eight cells surrounding
+             * a central cell
+             *
+             */
+            moore: function(cells, row, column) {
+                var candidates = [
+                    [ row - 1, column - 1 ],
+                    [ row - 1, column ],
+                    [ row - 1, column + 1],
 
-                [ row + 1, column ]
-            ];
+                    [ row, column - 1 ],
+                    [ row, column + 1],
 
-            return new automata.Neighbourhood(cells, candidates);
+                    [ row + 1, column - 1 ],
+                    [ row + 1, column ],
+                    [ row + 1, column + 1]
+                ];
+
+                return new Neighbourhood(cells, candidates);
+            },
+
+            /**
+             *
+             * . . . . .
+             * . . x . .
+             * . x o x .
+             * . . x . .
+             * . . . . .
+             *
+             * The von Neumann neighbourhood comprises the four cells orthogonally
+             * surrounding a central cell.
+             *
+             */
+            vonNeumann: function(cells, row, column) {
+                var candidates = [
+                    [ row - 1, column ],
+
+                    [ row, column - 1 ],
+                    [ row, column + 1 ],
+
+                    [ row + 1, column ]
+                ];
+
+                return new Neighbourhood(cells, candidates);
+            }
+        },
+
+        patterns: {
+            glider: [
+                [ 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 ],
+                [ 0, 0, 0, 1, 0, 0, 0, 0, 0, 0 ],
+                [ 0, 1, 1, 1, 0, 0, 0, 0, 0, 0 ],
+                [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+                [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+                [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+                [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+                [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+                [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+                [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ]
+            ],
+
+            oscillator: [
+                [ 0, 0, 0, 0, 0, 0 ],
+                [ 0, 0, 2, 0, 0, 0 ],
+                [ 0, 0, 1, 1, 2, 0 ],
+                [ 0, 2, 1, 1, 0, 0 ],
+                [ 0, 0, 0, 2, 0, 0 ],
+                [ 0, 0, 0, 0, 0, 0 ]
+            ]
         }
-    },
 
-    Neighbourhood: function(cells, candidates) {
+    };
+
+    var Neighbourhood = function(cells, candidates) {
         var neighbours = [ ],
             height = cells.length,
             width = cells[0].length,
@@ -189,32 +215,8 @@ window.automata = {
         }
 
         function isCellLive(cell) {
-            return cell == automata.states.ON;
+            return cell == STATES.ON;
         }
-    },
+    };
 
-    patterns: {
-        glider: [
-            [ 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 ],
-            [ 0, 0, 0, 1, 0, 0, 0, 0, 0, 0 ],
-            [ 0, 1, 1, 1, 0, 0, 0, 0, 0, 0 ],
-            [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-            [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-            [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-            [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-            [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-            [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-            [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ]
-        ],
-
-        oscillator: [
-            [ 0, 0, 0, 0, 0, 0 ],
-            [ 0, 0, 2, 0, 0, 0 ],
-            [ 0, 0, 1, 1, 2, 0 ],
-            [ 0, 2, 1, 1, 0, 0 ],
-            [ 0, 0, 0, 2, 0, 0 ],
-            [ 0, 0, 0, 0, 0, 0 ]
-        ]
-    }
-
-};
+})();
