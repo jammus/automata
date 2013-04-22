@@ -74,26 +74,55 @@ window.automata = {
     },
 
     neighbourhoods: {
-        moore: function(cells, row, column) {
-            var candidates = [ ];
 
-            for (var i = row - 1; i <= row + 1; i++) {
-                for (var j = column - 1; j <= column + 1; j++) {
-                    if (i == row && j == column) {
-                        continue;
-                    }
-                    candidates.push([i, j]);
-                }
-            }
+        /**
+         *
+         * . . . . .
+         * . x x x .
+         * . x o x .
+         * . x x x .
+         * . . . . .
+         *
+         * The Moore neighbourhood comprises the eight cells surrounding
+         * a central cell
+         *
+         */
+        moore: function(cells, row, column) {
+            var candidates = [
+                [ row - 1, column - 1 ],
+                [ row - 1, column ],
+                [ row - 1, column + 1],
+
+                [ row, column - 1 ],
+                [ row, column + 1],
+
+                [ row + 1, column - 1 ],
+                [ row + 1, column ],
+                [ row + 1, column + 1]
+            ];
 
             return new automata.Neighbourhood(cells, candidates);
         },
 
+        /**
+         *
+         * . . . . .
+         * . . x . .
+         * . x o x .
+         * . . x . .
+         * . . . . .
+         *
+         * The von Neumann neighbourhood comprises the four cells orthogonally
+         * surrounding a central cell.
+         *
+         */
         vonNeumann: function(cells, row, column) {
             var candidates = [
                 [ row - 1, column ],
+
                 [ row, column - 1 ],
                 [ row, column + 1 ],
+
                 [ row + 1, column ]
             ];
 
