@@ -1,28 +1,4 @@
 window.automata = {
-    gameOfLife: function(cell, neighbours) {
-        if (cell == 0 && neighbours == 3) {
-            return 1;
-        }
-
-        if (cell == 1 && neighbours < 2) {
-            return 0;
-        }
-
-        if (cell == 1 && neighbours > 3) {
-            return 0;
-        }
-
-        return cell;
-    },
-
-    seeds: function(cell, neighbours) {
-        if (cell == 0 && neighbours == 2) {
-            return 1;
-        }
-
-        return 0;
-    },
-
     nextGeneration: function(cells, rule) {
         var height = cells.length,
             width = cells[0].length;
@@ -98,6 +74,32 @@ window.automata = {
                 context.fillStyle = cell == 1 ? '#ff0000' : '#ffffff';
                 context.fillRect(x, y, blockSize, blockSize);
             }
+        }
+    },
+    
+    rules: {
+        gameOfLife: function(cell, neighbours) {
+            if (cell == 0 && neighbours == 3) {
+                return 1;
+            }
+
+            if (cell == 1 && neighbours < 2) {
+                return 0;
+            }
+
+            if (cell == 1 && neighbours > 3) {
+                return 0;
+            }
+
+            return cell;
+        },
+
+        seeds: function(cell, neighbours) {
+            if (cell == 0 && neighbours == 2) {
+                return 1;
+            }
+
+            return 0;
         }
     },
 
