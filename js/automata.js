@@ -1,5 +1,5 @@
 window.automata = {
-    nextGeneration: function(cells, rule) {
+    nextGeneration: function(cells, rule, neighbourhood) {
         var height = cells.length,
             width = cells[0].length;
 
@@ -9,7 +9,7 @@ window.automata = {
         for (var row = 0; row < height; row++) {
             for (var column = 0; column < width; column++) {
                 cell = cells[row][column];
-                neighbours = countNeighbours(row, column);
+                neighbours = neighbourhood(cells, row, column);
                 nextGeneration[row][column] = rule(cell, neighbours);
             }
         }
@@ -25,36 +25,6 @@ window.automata = {
 
             return cells;
         }
-
-        function countNeighbours(cellRow, cellColumn) {
-            var neighbours = 0;
-
-            for (var row = cellRow - 1; row <= cellRow + 1; row++) {
-                for (var column = cellColumn - 1; column <= cellColumn + 1; column++) {
-                    if (row == cellRow && column == cellColumn) {
-                        continue;
-                    }
-                    if (isCellLive(row, column)) {
-                        neighbours++;
-                    }
-                }
-            }
-
-            return neighbours;
-        }
-    
-        function isCellLive(row, column) {
-            if (row < 0 || row >= height) {
-                return false;
-            }
-
-            if (column < 0 || column >= width) {
-                return false;
-            }
-
-            return cells[row][column] == 1;
-        }
-
     },
 
     draw: function(context, cells) {
@@ -100,6 +70,39 @@ window.automata = {
             }
 
             return 0;
+        }
+    },
+
+    neighbourhoods: {
+        moore: function(cells, row, column) {
+            var height = cells.length,
+                width = cells[0].length,
+                neighbours = 0;
+
+            for (var i = row - 1; i <= row + 1; i++) {
+                for (var j = column - 1; j <= column + 1; j++) {
+                    if (i == row && j == column) {
+                        continue;
+                    }
+                    if (isCellLive(i, j)) {
+                        neighbours++;
+                    }
+                }
+            }
+
+            return neighbours;
+
+            function isCellLive(row, column) {
+                if (row < 0 || row >= height) {
+                    return false;
+                }
+
+                if (column < 0 || column >= width) {
+                    return false;
+                }
+
+                return cells[row][column] == 1;
+            }
         }
     },
 

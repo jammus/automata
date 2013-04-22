@@ -14,7 +14,11 @@
                 setTimeout(tick, 200);
 
                 function tick() {
-                    cells = automata.nextGeneration(cells, automata.rules.gameOfLife);
+                    cells = automata.nextGeneration(
+                        cells,
+                        automata.rules.gameOfLife,
+                        automata.neighbourhoods.moore
+                    );
                     automata.draw(context, cells);
                     setTimeout(tick, 200);
                 }
