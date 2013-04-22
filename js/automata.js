@@ -6,11 +6,10 @@
         DYING: 2
     };
 
-    var COLORS = {
-        0: '#ffffff',
-        1: '#ff0000',
-        2: '#0000ff'
-    };
+    var COLORS = { };
+    COLORS[STATES.OFF] = '#ffffff';
+    COLORS[STATES.ON] = '#ff0000';
+    COLORS[STATES.DYING] = '#0000ff';
 
     var automata = window.automata = {
 
