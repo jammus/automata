@@ -1,4 +1,13 @@
 window.automata = {
+
+    states: {
+        OFF: 0,
+
+        ON: 1,
+
+        DYING: 2,
+    },
+
     nextGeneration: function(cells, rule, neighbourhood) {
         var height = cells.length,
             width = cells[0].length;
@@ -28,12 +37,16 @@ window.automata = {
     },
 
     draw: function(context, cells) {
+        var COLORS = {
+            0: '#ffffff',
+            1: '#ff0000',
+            2: '#0000ff'
+        };
+
         var height = cells.length,
-            width = cells[0].length;
-
-        var blockSize = context.canvas.width / height;
-
-        var x, y, cell;
+            width = cells[0].length,
+            blockSize = context.canvas.width / height,
+            x, y, cell;
 
         for (var row = 0; row < height; row++) {
             for (var column = 0; column < width; column++) {
@@ -41,7 +54,7 @@ window.automata = {
                 y = row * blockSize;
                 cell = cells[row][column];
 
-                context.fillStyle = cell == 1 ? '#ff0000' : '#ffffff';
+                context.fillStyle = COLORS[cell];
                 context.fillRect(x, y, blockSize, blockSize);
             }
         }
@@ -49,16 +62,16 @@ window.automata = {
     
     rules: {
         gameOfLife: function(cell, neighbours) {
-            if (cell == 0 && neighbours == 3) {
-                return 1;
+            if (cell == automata.states.OFF && neighbours == 3) {
+                return automata.states.ON;
             }
 
-            if (cell == 1 && neighbours < 2) {
-                return 0;
+            if (cell == automata.states.ON && neighbours < 2) {
+                return automata.states.OFF;
             }
 
-            if (cell == 1 && neighbours > 3) {
-                return 0;
+            if (cell == automata.states.ON && neighbours > 3) {
+                return automata.states.OFF;
             }
 
             return cell;
@@ -66,11 +79,23 @@ window.automata = {
 
         seeds: function(cell, neighbours) {
             if (cell == 0 && neighbours == 2) {
-                return 1;
+                return automata.states.ON;
             }
 
-            return 0;
-        }
+            return automata.states.OFF;
+        },
+
+        briansBrain: function(cell, neighbours) {
+            if (cell == 0 && neighbours == 2) {
+                return automata.states.ON;
+            }
+
+            if (cell == automata.states.ON) {
+                return 2;
+            }
+
+            return automata.states.OFF;
+        },
     },
 
     neighbourhoods: {
@@ -164,7 +189,7 @@ window.automata = {
         }
 
         function isCellLive(cell) {
-            return cell == 1;
+            return cell == automata.states.ON;
         }
     },
 
@@ -180,6 +205,16 @@ window.automata = {
             [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
             [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
             [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ]
+        ],
+
+        oscillator: [
+            [ 0, 0, 0, 0, 0, 0 ],
+            [ 0, 0, 2, 0, 0, 0 ],
+            [ 0, 0, 1, 1, 2, 0 ],
+            [ 0, 2, 1, 1, 0, 0 ],
+            [ 0, 0, 0, 2, 0, 0 ],
+            [ 0, 0, 0, 0, 0, 0 ]
         ]
     }
+
 };
