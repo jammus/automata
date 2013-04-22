@@ -75,7 +75,8 @@ window.automata = {
 
     neighbourhoods: {
         moore: function(cells, row, column) {
-            var height = cells.length,
+            var cell,
+                height = cells.length,
                 width = cells[0].length,
                 neighbours = 0;
 
@@ -84,7 +85,8 @@ window.automata = {
                     if (i == row && j == column) {
                         continue;
                     }
-                    if (isCellLive(i, j)) {
+                    cell = cellAt(i, j);
+                    if (isCellLive(cell)) {
                         neighbours++;
                     }
                 }
@@ -92,16 +94,24 @@ window.automata = {
 
             return neighbours;
 
-            function isCellLive(row, column) {
-                if (row < 0 || row >= height) {
-                    return false;
+            function cellAt(row, column) {
+                if (row < 0) {
+                    row += height;
                 }
-
-                if (column < 0 || column >= width) {
-                    return false;
+                if (row >= height) {
+                    row -= height;
                 }
+                if (column < 0) {
+                    column += width;
+                }
+                if (column >= width) {
+                    column -= width;
+                }
+                return cells[row][column];
+            }
 
-                return cells[row][column] == 1;
+            function isCellLive(cell) {
+                return cell == 1;
             }
         }
     },
