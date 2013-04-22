@@ -10,7 +10,7 @@ window.automata = {
             for (var column = 0; column < width; column++) {
                 cell = cells[row][column];
                 neighbours = neighbourhood(cells, row, column);
-                nextGeneration[row][column] = rule(cell, neighbours);
+                nextGeneration[row][column] = rule(cell, neighbours.length);
             }
         }
 
@@ -75,44 +75,67 @@ window.automata = {
 
     neighbourhoods: {
         moore: function(cells, row, column) {
-            var cell,
-                height = cells.length,
-                width = cells[0].length,
-                neighbours = 0;
+            var candidates = [ ];
 
             for (var i = row - 1; i <= row + 1; i++) {
                 for (var j = column - 1; j <= column + 1; j++) {
                     if (i == row && j == column) {
                         continue;
                     }
-                    cell = cellAt(i, j);
-                    if (isCellLive(cell)) {
-                        neighbours++;
-                    }
+                    candidates.push([i, j]);
                 }
             }
 
-            return neighbours;
+            return new automata.Neighbourhood(cells, candidates);
+        },
 
-            function cellAt(row, column) {
-                if (row < 0) {
-                    row += height;
-                }
-                if (row >= height) {
-                    row -= height;
-                }
-                if (column < 0) {
-                    column += width;
-                }
-                if (column >= width) {
-                    column -= width;
-                }
-                return cells[row][column];
-            }
+        vonNeumann: function(cells, row, column) {
+            var candidates = [
+                [ row - 1, column ],
+                [ row, column - 1 ],
+                [ row, column + 1 ],
+                [ row + 1, column ]
+            ];
 
-            function isCellLive(cell) {
-                return cell == 1;
+            return new automata.Neighbourhood(cells, candidates);
+        }
+    },
+
+    Neighbourhood: function(cells, candidates) {
+        var neighbours = [ ],
+            height = cells.length,
+            width = cells[0].length,
+            candidate,
+            cell;
+
+        for (var index = 0; index < candidates.length; index++) {
+            candidate = candidates[index];
+            cell = cellAt(candidate[0], candidate[1]);
+            if (isCellLive(cell)) {
+                neighbours.push(cell);
             }
+        }
+
+        this.length = neighbours.length;
+
+        function cellAt(row, column) {
+            if (row < 0) {
+                row += height;
+            }
+            if (row >= height) {
+                row -= height;
+            }
+            if (column < 0) {
+                column += width;
+            }
+            if (column >= width) {
+                column -= width;
+            }
+            return cells[row][column];
+        }
+
+        function isCellLive(cell) {
+            return cell == 1;
         }
     },
 
