@@ -5,27 +5,48 @@
         <script src="js/automata.js"></script>
         <script>
             window.addEventListener('load', function() {
-                var canvas = document.getElementById('board'),
-                    context = canvas.getContext("2d");
 
-                var cells = automata.patterns.oscillator;
-                automata.draw(context, cells);
-
-                setTimeout(tick, 200);
-
-                function tick() {
-                    cells = automata.nextGeneration(
-                        cells,
-                        automata.rules.briansBrain,
-                        automata.neighbourhoods.moore
-                    );
+                function runGame(id, initialState, rule, neighbourhood, timeout) {
+                    var canvas = document.getElementById(id),
+                        context = canvas.getContext("2d");
+                        
+                    var cells = initialState;
                     automata.draw(context, cells);
-                    setTimeout(tick, 300);
+                    
+                    setTimeout(tick, timeout);
+
+                    function tick() {
+                        cells = automata.nextGeneration(
+                            cells,
+                            rule,
+                            neighbourhood
+                        );
+                        automata.draw(context, cells);
+                        setTimeout(tick, timeout);
+                    }
                 }
+                
+                runGame(
+                    'gameOfLife',
+                    automata.patterns.glider,
+                    automata.rules.gameOfLife,
+                    automata.neighbourhoods.moore,
+                    200
+                );
+
+                runGame(
+                    'briansBrain',
+                    automata.patterns.oscillator,
+                    automata.rules.briansBrain,
+                    automata.neighbourhoods.moore,
+                    300
+                );
+
             });
         </script>
     </head>
     <body>
-        <canvas id="board" width="400" height="400"></canvas>
+        <canvas id="gameOfLife" width="400" height="400"></canvas>
+        <canvas id="briansBrain" width="400" height="400"></canvas>
     </body>
 </html>
