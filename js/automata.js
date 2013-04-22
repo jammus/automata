@@ -90,7 +90,7 @@
                 }
 
                 if (cell == STATES.ON) {
-                    return 2;
+                    return STATES.DYING;
                 }
 
                 return STATES.OFF;
