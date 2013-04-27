@@ -42,11 +42,19 @@
                     300
                 );
 
+                runGame(
+                    'wireworld',
+                    automata.patterns.xor,
+                    automata.rules.wireworld,
+                    automata.neighbourhoods.moore,
+                    100
+                );
             });
         </script>
     </head>
     <body>
         <canvas id="gameOfLife" width="400" height="400"></canvas>
         <canvas id="briansBrain" width="400" height="400"></canvas>
+        <canvas id="wireworld" width="400" height="400"></canvas>
     </body>
 </html>
