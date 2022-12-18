@@ -18,20 +18,11 @@
         [STATES.CONDUCTOR]: '#ffff00',
     };
 
-    const makeSoup = function() {
-	const height = 200;
-	const width = 200;
-	const soup = [];
-	for (let i = 0; i < height; i++) {
-	   const row = [];
-	   for (let j = 0; j < width; j++) {
-	      row.push(Math.round(Math.random()));
-	   }
-	   soup.push(row);
-	}
-        return soup;
-    };
+    const makeArray = (length, f) => [...Array(length)].map(f);
 
+    const randomRow = (length) => makeArray(length, () => Math.round(Math.random()));
+
+    const makeSoup = (width, height) => makeArray(height, () => randomRow(width));
 
     const automata = window.automata = {
 
@@ -231,7 +222,7 @@
                 [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ]
             ],
 
-	    soup: makeSoup(),
+	    soup: makeSoup(150, 150),
         }
 
     };
