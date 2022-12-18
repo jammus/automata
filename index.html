@@ -6,6 +6,7 @@
         <script>
             window.addEventListener('load', function() {
 
+		console.log(automata.patterns.soup);
                 function runGame(id, initialState, rule, neighbourhood, timeout) {
                     var canvas = document.getElementById(id),
                         context = canvas.getContext("2d");
@@ -31,7 +32,7 @@
                     automata.patterns.glider,
                     automata.rules.gameOfLife,
                     automata.neighbourhoods.moore,
-                    200
+                    90
                 );
 
                 runGame(
@@ -49,6 +50,14 @@
                     automata.neighbourhoods.moore,
                     100
                 );
+
+                runGame(
+                    'soup',
+                    automata.patterns.soup,
+                    automata.rules.gameOfLife,
+                    automata.neighbourhoods.moore,
+                    100
+                );
             });
         </script>
     </head>
@@ -56,5 +65,6 @@
         <canvas id="gameOfLife" width="400" height="400"></canvas>
         <canvas id="briansBrain" width="400" height="400"></canvas>
         <canvas id="wireworld" width="400" height="400"></canvas>
+        <canvas id="soup" width="400" height="400"></canvas>
     </body>
 </html>

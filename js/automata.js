@@ -1,6 +1,6 @@
 (function() {
 
-    var STATES = {
+    const STATES = {
         OFF: 0,
         ON: 1,
         DYING: 2,
@@ -11,23 +11,39 @@
         CONDUCTOR: 3
     };
 
-    var COLORS = { };
-    COLORS[STATES.OFF] = '#ffffff';
-    COLORS[STATES.ON] = '#ff0000';
-    COLORS[STATES.DYING] = '#0000ff';
-    COLORS[STATES.CONDUCTOR] = '#ffff00';
+    const COLORS = {
+        [STATES.OFF]: '#ffffff',
+        [STATES.ON]: '#ff0000',
+        [STATES.DYING]: '#0000ff',
+        [STATES.CONDUCTOR]: '#ffff00',
+    };
 
-    var automata = window.automata = {
+    const makeSoup = function() {
+	const height = 200;
+	const width = 200;
+	const soup = [];
+	for (let i = 0; i < height; i++) {
+	   const row = [];
+	   for (let j = 0; j < width; j++) {
+	      row.push(Math.round(Math.random()));
+	   }
+	   soup.push(row);
+	}
+        return soup;
+    };
+
+
+    const automata = window.automata = {
 
         nextGeneration: function(cells, rule, neighbourhood) {
-            var height = cells.length,
+            const height = cells.length,
                 width = cells[0].length;
 
-            var nextGeneration = initialiseCells(width, height),
-                cell, neighbours;
+            const nextGeneration = initialiseCells(width, height);
+            let cell, neighbours;
 
-            for (var row = 0; row < height; row++) {
-                for (var column = 0; column < width; column++) {
+            for (let row = 0; row < height; row++) {
+                for (let column = 0; column < width; column++) {
                     cell = cells[row][column];
                     neighbours = neighbourhood(cells, row, column);
                     nextGeneration[row][column] = rule(cell, neighbours.length);
@@ -37,9 +53,9 @@
             return nextGeneration;
 
             function initialiseCells(width, height) {
-                var cells = [ ];
+                const cells = [ ];
 
-                for (var i = 0; i < height; i++) {
+                for (let i = 0; i < height; i++) {
                     cells[i] = [ ];
                 }
 
@@ -48,13 +64,13 @@
         },
 
         draw: function(context, cells) {
-            var height = cells.length,
+            const height = cells.length,
                 width = cells[0].length,
-                blockSize = context.canvas.width / Math.max(height, width),
-                x, y, cell;
+                blockSize = context.canvas.width / Math.max(height, width);
+            let x, y, cell;
 
-            for (var row = 0; row < height; row++) {
-                for (var column = 0; column < width; column++) {
+            for (let row = 0; row < height; row++) {
+                for (let column = 0; column < width; column++) {
                     x = column * blockSize;
                     y = row * blockSize;
                     cell = cells[row][column];
@@ -134,7 +150,7 @@
              *
              */
             moore: function(cells, row, column) {
-                var candidates = [
+                const candidates = [
                     [ row - 1, column - 1 ],
                     [ row - 1, column ],
                     [ row - 1, column + 1],
@@ -163,7 +179,7 @@
              *
              */
             vonNeumann: function(cells, row, column) {
-                var candidates = [
+                const candidates = [
                     [ row - 1, column ],
 
                     [ row, column - 1 ],
@@ -213,19 +229,20 @@
                 [ 0, 0, 0, 3, 3, 3, 3, 3, 3, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
                 [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
                 [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ]
-            ]
+            ],
+
+	    soup: makeSoup(),
         }
 
     };
 
-    var Neighbourhood = function(cells, candidates) {
-        var neighbours = [ ],
+    const Neighbourhood = function(cells, candidates) {
+        const neighbours = [ ],
             height = cells.length,
-            width = cells[0].length,
-            candidate,
-            cell;
+            width = cells[0].length;
+        let candidate, cell;
 
-        for (var index = 0; index < candidates.length; index++) {
+        for (let index = 0; index < candidates.length; index++) {
             candidate = candidates[index];
             cell = cellAt(candidate[0], candidate[1]);
             if (isCellLive(cell)) {
@@ -255,5 +272,4 @@
             return cell == STATES.ON;
         }
     };
-
 })();
