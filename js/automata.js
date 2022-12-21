@@ -31,22 +31,19 @@
                 return rule(cell, neighbours.length);
             })),
 
-        draw: function(context, cells) {
+        draw: (context, cells) => {
             const height = cells.length,
                 width = cells[0].length,
                 blockSize = context.canvas.width / Math.max(height, width);
-            let x, y, cell;
 
-            for (let row = 0; row < height; row++) {
-                for (let column = 0; column < width; column++) {
-                    x = column * blockSize;
-                    y = row * blockSize;
-                    cell = cells[row][column];
-
+            cells.forEach((row, rowIndex) =>
+                row.forEach((cell, cellIndex) => {
+                    const x = cellIndex * blockSize;
+                    const y = rowIndex * blockSize;
                     context.fillStyle = COLORS[cell];
                     context.fillRect(x, y, blockSize, blockSize);
-                }
-            }
+                })
+            );
         },
 
         rules: {
