@@ -25,34 +25,11 @@
     const makeSoup = (width, height) => makeArray(height, () => randomRow(width));
 
     const automata = window.automata = {
-
-        nextGeneration: function(cells, rule, neighbourhood) {
-            const height = cells.length,
-                width = cells[0].length;
-
-            const nextGeneration = initialiseCells(width, height);
-            let cell, neighbours;
-
-            for (let row = 0; row < height; row++) {
-                for (let column = 0; column < width; column++) {
-                    cell = cells[row][column];
-                    neighbours = neighbourhood(cells, row, column);
-                    nextGeneration[row][column] = rule(cell, neighbours.length);
-                }
-            }
-
-            return nextGeneration;
-
-            function initialiseCells(width, height) {
-                const cells = [ ];
-
-                for (let i = 0; i < height; i++) {
-                    cells[i] = [ ];
-                }
-
-                return cells;
-            }
-        },
+        nextGeneration: (cells, rule, neighbourhood) =>
+            cells.map((row, rowIndex) => row.map((cell, cellIndex) => {
+                const neighbours = neighbourhood(cells, rowIndex, cellIndex);
+                return rule(cell, neighbours.length);
+            })),
 
         draw: function(context, cells) {
             const height = cells.length,
