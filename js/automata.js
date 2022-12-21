@@ -202,20 +202,17 @@
     };
 
     const Neighbourhood = function(cells, candidates) {
-        const neighbours = [ ],
-            height = cells.length,
+        const height = cells.length,
             width = cells[0].length;
-        let candidate, cell;
 
-        for (let index = 0; index < candidates.length; index++) {
-            candidate = candidates[index];
-            cell = cellAt(candidate[0], candidate[1]);
-            if (isCellLive(cell)) {
-                neighbours.push(cell);
-            }
-        }
+        const isCellLive = (cell) => cell == STATES.ON;
 
-        this.length = neighbours.length;
+        const neighbourCount = candidates.reduce((count, candidate) => {
+            const cell = cellAt(candidate[0], candidate[1]);
+            return isCellLive(cell) ? count + 1 : count;
+        }, 0);
+
+        this.length = neighbourCount;
 
         function cellAt(row, column) {
             if (row < 0) {
@@ -231,10 +228,6 @@
                 column -= width;
             }
             return cells[row][column];
-        }
-
-        function isCellLive(cell) {
-            return cell == STATES.ON;
         }
     };
 })();
