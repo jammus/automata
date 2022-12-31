@@ -33,9 +33,8 @@
         nextGeneration: (board, rule, neighbourhood) => ({
             ...board,
             cells: board.cells.map((cell, index) => {
-                const [row, column] = rowColumnFromIndex(board, index);
-                const neighbours = neighbourhood(board, row, column);
-                return rule(cell, neighbours.length);
+                const liveNeighbours = countNeighbours(board, index, neighbourhood);
+                return rule(cell, liveNeighbours);
             })
         }),
 
@@ -121,8 +120,8 @@
              * a central cell
              *
              */
-            moore: function(cells, row, column) {
-                const candidates = [
+            moore: function(row, column) {
+                return [
                     [ row - 1, column - 1 ],
                     [ row - 1, column ],
                     [ row - 1, column + 1],
@@ -134,8 +133,6 @@
                     [ row + 1, column ],
                     [ row + 1, column + 1]
                 ];
-
-                return new Neighbourhood(cells, candidates);
             },
 
             /**
@@ -150,8 +147,8 @@
              * surrounding a central cell.
              *
              */
-            vonNeumann: function(cells, row, column) {
-                const candidates = [
+            vonNeumann: function(row, column) {
+                return [
                     [ row - 1, column ],
 
                     [ row, column - 1 ],
@@ -159,8 +156,6 @@
 
                     [ row + 1, column ]
                 ];
-
-                return new Neighbourhood(cells, candidates);
             }
         },
 
@@ -240,34 +235,31 @@
 
     };
 
-    const Neighbourhood = function(board, candidates) {
-        const height = board.height,
-            width = board.width;
+    const isCellLive = (cell) => cell == STATES.ON;
 
-        const isCellLive = (cell) => cell == STATES.ON;
+    const cellAt = (board, row, column) => {
+        if (row < 0) {
+            row += board.height;
+        }
+        if (row >= board.height) {
+            row -= board.height;
+        }
+        if (column < 0) {
+            column += board.width;
+        }
+        if (column >= board.width) {
+            column -= board.width;
+        }
+        const index = (row * board.width) + column;
+        return board.cells[index];
+    };
 
-        const neighbourCount = candidates.reduce((count, candidate) => {
-            const cell = cellAt(candidate[0], candidate[1]);
+    const countNeighbours = (board, index, neighbourhood) => {
+        const [row, column] = rowColumnFromIndex(board, index);
+        const neighbouringCells = neighbourhood(row, column);
+        return neighbouringCells.reduce((count, candidate) => {
+            const cell = cellAt(board, candidate[0], candidate[1]);
             return isCellLive(cell) ? count + 1 : count;
         }, 0);
-
-        this.length = neighbourCount;
-
-        function cellAt(row, column) {
-            if (row < 0) {
-                row += height;
-            }
-            if (row >= height) {
-                row -= height;
-            }
-            if (column < 0) {
-                column += width;
-            }
-            if (column >= width) {
-                column -= width;
-            }
-            const index = (row * width) + column;
-            return board.cells[index];
-        }
     };
 })();
