@@ -11,7 +11,7 @@
                     var canvas = document.getElementById(id),
                         context = canvas.getContext("2d");
                         
-                    var cells = initialState;
+                    var cells = initialState.cells;
                     automata.draw(context, cells);
                     
                     setTimeout(tick, timeout);
