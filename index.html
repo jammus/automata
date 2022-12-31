@@ -11,18 +11,18 @@
                     var canvas = document.getElementById(id),
                         context = canvas.getContext("2d");
                         
-                    var cells = initialState.cells;
-                    automata.draw(context, cells);
+                    var board = initialState;
+                    automata.draw(context, board);
                     
                     setTimeout(tick, timeout);
 
                     function tick() {
-                        cells = automata.nextGeneration(
-                            cells,
+                        board = automata.nextGeneration(
+                            board,
                             rule,
                             neighbourhood
                         );
-                        automata.draw(context, cells);
+                        automata.draw(context, board);
                         setTimeout(tick, timeout);
                     }
                 }

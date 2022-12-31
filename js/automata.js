@@ -25,18 +25,20 @@
     const makeSoup = (width, height) => makeArray(height, () => randomRow(width));
 
     const automata = window.automata = {
-        nextGeneration: (cells, rule, neighbourhood) =>
-            cells.map((row, rowIndex) => row.map((cell, cellIndex) => {
-                const neighbours = neighbourhood(cells, rowIndex, cellIndex);
+        nextGeneration: (board, rule, neighbourhood) => ({
+            ...board,
+            cells: board.cells.map((row, rowIndex) => row.map((cell, cellIndex) => {
+                const neighbours = neighbourhood(board, rowIndex, cellIndex);
                 return rule(cell, neighbours.length);
-            })),
+            }))
+        }),
 
-        draw: (context, cells) => {
-            const height = cells.length,
-                width = cells[0].length,
+        draw: (context, board) => {
+            const height = board.height,
+                width = board.width,
                 blockSize = context.canvas.width / Math.max(height, width);
 
-            cells.forEach((row, rowIndex) =>
+            board.cells.forEach((row, rowIndex) =>
                 row.forEach((cell, cellIndex) => {
                     const x = cellIndex * blockSize;
                     const y = rowIndex * blockSize;
@@ -233,9 +235,9 @@
 
     };
 
-    const Neighbourhood = function(cells, candidates) {
-        const height = cells.length,
-            width = cells[0].length;
+    const Neighbourhood = function(board, candidates) {
+        const height = board.height,
+            width = board.width;
 
         const isCellLive = (cell) => cell == STATES.ON;
 
@@ -259,7 +261,7 @@
             if (column >= width) {
                 column -= width;
             }
-            return cells[row][column];
+            return board.cells[row][column];
         }
     };
 })();
