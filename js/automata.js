@@ -24,12 +24,16 @@
 
     const makeSoup = (width, height) => randomRow(width * height);
 
+    const rowColumnFromIndex = (board, index) => [
+        Math.floor(index / board.width),
+        index % board.width
+    ];
+
     const automata = window.automata = {
         nextGeneration: (board, rule, neighbourhood) => ({
             ...board,
             cells: board.cells.map((cell, index) => {
-                const row = Math.floor(index / board.width);
-                const column = index % board.width;
+                const [row, column] = rowColumnFromIndex(board, index);
                 const neighbours = neighbourhood(board, row, column);
                 return rule(cell, neighbours.length);
             })
@@ -41,8 +45,7 @@
                 blockSize = context.canvas.width / Math.max(height, width);
 
             board.cells.forEach((cell, index) => {
-                const row = Math.floor(index / board.width);
-                const column = index % board.width;
+                const [row, column] = rowColumnFromIndex(board, index);
                 const x = column * blockSize;
                 const y = row * blockSize;
                 context.fillStyle = COLORS[cell];
